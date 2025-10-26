@@ -1,0 +1,1063 @@
+# rubik-s-cube-algorthims
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CFOP Method - Complete Guide</title>
+    <style>
+        @media print {
+            body { background: white; }
+            .no-print { display: none; }
+            .page-break { page-break-after: always; }
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .page {
+            background: white;
+            padding: 40px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .print-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        
+        .print-button:hover {
+            background: #45a049;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            border-bottom: 4px solid #3498db;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            font-size: 36px;
+        }
+        
+        h2 {
+            color: #2980b9;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #ecf0f1;
+            border-left: 5px solid #3498db;
+        }
+        
+        h3 {
+            color: #34495e;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .intro-box {
+            background: #e8f4f8;
+            border: 2px solid #3498db;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .step-box {
+            border: 2px solid #95a5a6;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            background: #fafafa;
+        }
+        
+        .formula-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .cube-diagram {
+            margin: 20px auto;
+            text-align: center;
+        }
+        
+        .cube-grid {
+            display: inline-grid;
+            grid-template-columns: repeat(3, 40px);
+            gap: 2px;
+            margin: 10px;
+        }
+        
+        .cube-piece {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        
+        .white { background: #ffffff; }
+        .yellow { background: #ffeb3b; }
+        .red { background: #f44336; color: white; }
+        .orange { background: #ff9800; }
+        .blue { background: #2196f3; color: white; }
+        .green { background: #4caf50; color: white; }
+        .gray { background: #bdbdbd; }
+        
+        .notation-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        .notation-table th,
+        .notation-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        .notation-table th {
+            background: #3498db;
+            color: white;
+        }
+        
+        .notation-table tr:nth-child(even) {
+            background: #f2f2f2;
+        }
+        
+        .tip-box {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .tip-box strong {
+            color: #155724;
+        }
+        
+        .arrow {
+            font-size: 24px;
+            color: #e74c3c;
+            margin: 0 10px;
+        }
+        
+        .scenario {
+            background: #e8f5e9;
+            border: 2px dashed #4caf50;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+        
+        .memory-trick {
+            background: #fff9c4;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            font-style: italic;
+        }
+        
+        ul {
+            margin-left: 20px;
+            line-height: 1.8;
+        }
+        
+        .oll-case, .pll-case {
+            display: inline-block;
+            margin: 15px;
+            padding: 15px;
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            text-align: center;
+            background: white;
+            min-width: 200px;
+        }
+        
+        .case-name {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <button class="print-button no-print" onclick="window.print()">🖨️ Print / Save as PDF</button>
+    
+    <div class="page">
+        <h1>🎲 CFOP METHOD FOR RUBIK'S CUBE</h1>
+        <h2 style="text-align: center; color: #7f8c8d; margin-top: -20px;">Complete Beginner's Guide with Visual Diagrams</h2>
+        
+        <div class="intro-box">
+            <h3>What is CFOP?</h3>
+            <p><strong>CFOP</strong> stands for:</p>
+            <ul>
+                <li><strong>C</strong>ross - Solve the white cross on the bottom</li>
+                <li><strong>F</strong>2L - First Two Layers (solve corners and edges together)</li>
+                <li><strong>O</strong>LL - Orient Last Layer (make the top face all yellow)</li>
+                <li><strong>P</strong>LL - Permute Last Layer (solve the entire cube)</li>
+            </ul>
+            <p><strong>⏱️ Average solve time:</strong> With practice, 30-60 seconds for beginners, under 20 seconds for advanced solvers!</p>
+        </div>
+        
+        <h2>📖 NOTATION GUIDE</h2>
+        <table class="notation-table">
+            <tr>
+                <th>Move</th>
+                <th>Meaning</th>
+                <th>Direction</th>
+            </tr>
+            <tr>
+                <td><strong>R</strong></td>
+                <td>Right face</td>
+                <td>Clockwise 90°</td>
+            </tr>
+            <tr>
+                <td><strong>R'</strong></td>
+                <td>Right face</td>
+                <td>Counter-clockwise 90° (prime)</td>
+            </tr>
+            <tr>
+                <td><strong>R2</strong></td>
+                <td>Right face</td>
+                <td>180° turn</td>
+            </tr>
+            <tr>
+                <td><strong>L</strong></td>
+                <td>Left face</td>
+                <td>Clockwise 90°</td>
+            </tr>
+            <tr>
+                <td><strong>U</strong></td>
+                <td>Up (top) face</td>
+                <td>Clockwise 90°</td>
+            </tr>
+            <tr>
+                <td><strong>D</strong></td>
+                <td>Down (bottom) face</td>
+                <td>Clockwise 90°</td>
+            </tr>
+            <tr>
+                <td><strong>F</strong></td>
+                <td>Front face</td>
+                <td>Clockwise 90°</td>
+            </tr>
+            <tr>
+                <td><strong>B</strong></td>
+                <td>Back face</td>
+                <td>Clockwise 90°</td>
+            </tr>
+        </table>
+        
+        <div class="tip-box">
+            <strong>💡 Tip:</strong> The apostrophe (') means counter-clockwise, and 2 means turn 180 degrees.
+        </div>
+    </div>
+    
+    <div class="page page-break">
+        <h2>STEP 1: THE CROSS (White Cross)</h2>
+        
+        <div class="step-box">
+            <h3>🎯 Goal: Create a white cross on the bottom</h3>
+            <p>Place the white center on the bottom and solve the four white edge pieces around it, making sure the edge colors match the center colors of adjacent faces.</p>
+            
+            <div class="cube-diagram">
+                <p><strong>What you're building:</strong></p>
+                <div class="cube-grid">
+                    <div class="cube-piece gray"></div>
+                    <div class="cube-piece white">⬆️</div>
+                    <div class="cube-piece gray"></div>
+                    <div class="cube-piece white">⬅️</div>
+                    <div class="cube-piece white">✓</div>
+                    <div class="cube-piece white">➡️</div>
+                    <div class="cube-piece gray"></div>
+                    <div class="cube-piece white">⬇️</div>
+                    <div class="cube-piece gray"></div>
+                </div>
+                <p><em>White cross with matching side colors</em></p>
+            </div>
+            
+            <div class="memory-trick">
+                <strong>🧠 Memory Trick:</strong> Think of it as a "daisy" first - get all white edges around the yellow center on top, then flip them down to the bottom to form the cross.
+            </div>
+            
+            <h3>Basic Cross Strategy:</h3>
+            <ol>
+                <li>Find a white edge piece</li>
+                <li>Move it to the top layer</li>
+                <li>Rotate the top to align the edge color with its center</li>
+                <li>Flip it down with <strong>F2</strong></li>
+                <li>Repeat for all four edges</li>
+            </ol>
+        </div>
+    </div>
+    
+    <div class="page page-break">
+        <h2>STEP 2: F2L (First Two Layers)</h2>
+        
+        <div class="step-box">
+            <h3>🎯 Goal: Solve corners and edges together as pairs</h3>
+            <p>This step solves the first two layers by pairing corner and edge pieces and inserting them together.</p>
+            
+            <h3>Basic F2L Case: Corner and Edge in Top Layer</h3>
+            
+            <div class="scenario">
+                <strong>Scenario 1:</strong> Corner white facing up, edge on top
+                <div class="formula-box">U R U' R'</div>
+                <p><em>Brings the pair together and inserts it</em></p>
+            </div>
+            
+            <div class="scenario">
+                <strong>Scenario 2:</strong> Corner white facing side, edge on top
+                <div class="formula-box">R U R'</div>
+                <p><em>Simple insertion when pieces are aligned</em></p>
+            </div>
+            
+            <div class="scenario">
+                <strong>Scenario 3:</strong> Pair already formed in top layer
+                <div class="formula-box">R U' R' U R U' R'</div>
+                <p><em>Direct insertion of formed pair</em></p>
+            </div>
+            
+            <div class="memory-trick">
+                <strong>🧠 Memory Trick:</strong> Think "Up, Right, Down, Left" - you're creating space, inserting the pair, and closing the space.
+            </div>
+            
+            <div class="tip-box">
+                <strong>💡 Tip:</strong> Always keep the cross on the bottom. Rotate the entire cube to position your working slot in the front-right position.
+            </div>
+        </div>
+    </div>
+    
+    <div class="page page-break">
+        <h2>STEP 3: OLL (Orient Last Layer) - MAKE TOP YELLOW</h2>
+        
+        <div class="step-box">
+            <h3>🎯 Goal: Make the entire top face yellow</h3>
+            <p>This is done in two sub-steps for beginners:</p>
+            
+            <h3>Sub-Step 1: Create a Yellow Cross</h3>
+            
+            <div class="cube-diagram">
+                <p><strong>You'll see one of these patterns:</strong></p>
+                <div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
+                    <div style="text-align: center; margin: 10px;">
+                        <div class="cube-grid">
+                            <div class="cube-piece gray"></div>
+                            <div class="cube-piece gray"></div>
+                            <div class="cube-piece gray"></div>
+                            <div class="cube-piece gray"></div>
+                            <div class="cube-piece yellow">✓</div>
+                            <div class="cube-piece gray"></div>
+                            <div class="cube-piece gray"></div>
+                            <div class="cube-piece gray"></div>
+                            <div class="cube-piece gray"></div>
+                        </div>
+                        <p><strong>Dot</strong></p>
+                    </div>
+                    
+                    <div style="text-align: center; margin: 10px;">
+                        <div class="cube-grid">
+                            <div class="cube-piece gray"></div>
+                            <div class="cube-piece yellow">✓</div>
+                            <div class="cube-piece gray"></div>
+                            <div class="cube-piece gray"></div>
+                            <div class="cube-piece yellow">✓</div>
+                            <div class="cube-piece gray"></div>
+                            <div class="cube-piece gray"></div>
+                            <div class="cube-piece gray"></div>
+                            <div class="cube-piece gray"></div>
+                        </div>
+                        <p><strong>L-Shape</strong></p>
+                    </div>
+                    
+                    <div style="text-align: center; margin: 10px;">
+                        <div class="cube-grid">
+                            <div class="cube-piece gray"></div>
+                            <div class="cube-piece yellow">✓</div>
+                            <div class="cube-piece gray"></div>
+                            <div class="cube-piece gray"></div>
+                            <div class="cube-piece yellow">✓</div>
+                            <div class="cube-piece gray"></div>
+                            <div class="cube-piece gray"></div>
+                            <div class="cube-piece yellow">✓</div>
+                            <div class="cube-piece gray"></div>
+                        </div>
+                        <p><strong>Line</strong></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="oll-case">
+                <div class="case-name">DOT PATTERN</div>
+                <div class="formula-box">F R U R' U' F'</div>
+                <p>This gives you an L-shape</p>
+            </div>
+            
+            <div class="oll-case">
+                <div class="case-name">L-SHAPE</div>
+                <div class="formula-box">F R U R' U' F'</div>
+                <p>Position L in top-left corner<br>This gives you a LINE</p>
+            </div>
+            
+            <div class="oll-case">
+                <div class="case-name">LINE</div>
+                <div class="formula-box">F R U R' U' F'</div>
+                <p>Position line horizontally<br>This gives you a CROSS</p>
+            </div>
+            
+            <div class="memory-trick">
+                <strong>🧠 Memory Trick:</strong> Same formula for all! Just remember: <strong>"F R U R' U' F'"</strong> - say it like "FRU RU F". Think "Fru-Ru-F" (like fruit!).
+            </div>
+        </div>
+    </div>
+    
+    <div class="page page-break">
+        <h2>OLL - SUB-STEP 2: ORIENT CORNERS</h2>
+        
+        <div class="step-box">
+            <h3>Now you have a yellow cross. Time to make ALL of the top face yellow!</h3>
+            
+            <p>Count how many corners already have yellow on top:</p>
+            
+            <div class="oll-case">
+                <div class="case-name">ZERO YELLOW CORNERS</div>
+                <div class="cube-diagram">
+                    <div class="cube-grid">
+                        <div class="cube-piece gray"></div>
+                        <div class="cube-piece yellow">✓</div>
+                        <div class="cube-piece gray"></div>
+                        <div class="cube-piece yellow">✓</div>
+                        <div class="cube-piece yellow">✓</div>
+                        <div class="cube-piece yellow">✓</div>
+                        <div class="cube-piece gray"></div>
+                        <div class="cube-piece yellow">✓</div>
+                        <div class="cube-piece gray"></div>
+                    </div>
+                </div>
+                <div class="formula-box">R U R' U R U2 R'</div>
+                <p><em>Apply once or twice until all corners are yellow</em></p>
+            </div>
+            
+            <div class="oll-case">
+                <div class="case-name">TWO YELLOW CORNERS (DIAGONAL)</div>
+                <div class="cube-diagram">
+                    <div class="cube-grid">
+                        <div class="cube-piece yellow">✓</div>
+                        <div class="cube-piece yellow">✓</div>
+                        <div class="cube-piece gray"></div>
+                        <div class="cube-piece yellow">✓</div>
+                        <div class="cube-piece yellow">✓</div>
+                        <div class="cube-piece yellow">✓</div>
+                        <div class="cube-piece gray"></div>
+                        <div class="cube-piece yellow">✓</div>
+                        <div class="cube-piece yellow">✓</div>
+                    </div>
+                </div>
+                <div class="formula-box">R U R' U R U2 R'</div>
+                <p><em>Yellow corners in opposite diagonal positions</em></p>
+            </div>
+            
+            <div class="oll-case">
+                <div class="case-name">TWO YELLOW CORNERS (ADJACENT)</div>
+                <div class="cube-diagram">
+                    <div class="cube-grid">
+                        <div class="cube-piece yellow">✓</div>
+                        <div class="cube-piece yellow">✓</div>
+                        <div class="cube-piece yellow">✓</div>
+                        <div class="cube-piece yellow">✓</div>
+                        <div class="cube-piece yellow">✓</div>
+                        <div class="cube-piece yellow">✓</div>
+                        <div class="cube-piece gray"></div>
+                        <div class="cube-piece yellow">✓</div>
+                        <div class="cube-piece gray"></div>
+                    </div>
+                </div>
+                <p>Position the two yellow corners in the back</p>
+                <div class="formula-box">R U R' U R U2 R'</div>
+            </div>
+            
+            <div class="memory-trick">
+                <strong>🧠 Memory Trick for "Sune":</strong> <strong>R U R' U R U2 R'</strong>
+                <br>Say it as: "Right-Up, Right-Down, Right-Up-Up, Right-Down"
+                <br>OR think: "Sexy move (R U R' U) + Sexy move but double the U (R U2 R')"
+            </div>
+            
+            <div class="tip-box">
+                <strong>💡 Key Tip:</strong> This algorithm is called "Sune" (pronounced "Sue-nay"). You might need to do it 1-3 times until the entire top is yellow. Just keep repeating and turning the top layer!
+            </div>
+        </div>
+    </div>
+    
+    <div class="page page-break">
+        <h2>STEP 4: PLL (Permute Last Layer) - FINAL STEP!</h2>
+        
+        <div class="step-box">
+            <h3>🎯 Goal: Solve the entire cube!</h3>
+            <p>The top face is now all yellow. Now we need to move the pieces to their correct positions.</p>
+            
+            <h3>Sub-Step 1: Position the Corners</h3>
+            
+            <div class="scenario">
+                <p><strong>Look at the corner pieces:</strong> Find a corner that's already in the correct position (all three colors match the center colors of the three faces).</p>
+                
+                <p><strong>If you find one correct corner:</strong></p>
+                <ol>
+                    <li>Put that corner in the front-right position</li>
+                    <li>Use the algorithm below</li>
+                    <li>This will solve all four corners</li>
+                </ol>
+                
+                <div class="formula-box">U R U' L' U R' U' L</div>
+                
+                <div class="memory-trick">
+                    <strong>🧠 Memory Trick:</strong> "Up-Right-Down, Left-back, Up-Right-back-Down, Left-forward"
+                    <br>Pattern: Move right side, move left side, opposite motions
+                </div>
+            </div>
+            
+            <div class="scenario">
+                <p><strong>If NO corners are correct:</strong></p>
+                <p>Do the algorithm once from any angle, then you'll have one correct corner. Then follow the steps above.</p>
+            </div>
+            
+            <div class="tip-box">
+                <strong>💡 Important:</strong> After this step, the corners should all be in their correct positions (but edges might not be solved yet).
+            </div>
+        </div>
+    </div>
+    
+    <div class="page page-break">
+        <h2>PLL - SUB-STEP 2: POSITION THE EDGES</h2>
+        
+        <div class="step-box">
+            <h3>Final moves to solve the cube!</h3>
+            
+            <p>Now look at the four edges on the top. You'll see one of these patterns:</p>
+            
+            <div class="pll-case">
+                <div class="case-name">ALL EDGES SOLVED ✓</div>
+                <p><strong>Congratulations! Your cube is solved!</strong></p>
+            </div>
+            
+            <div class="pll-case">
+                <div class="case-name">ONE SIDE CORRECT</div>
+                <p>One face has both edge colors matching the center</p>
+                <ol>
+                    <li>Put the correct face in the BACK</li>
+                    <li>Determine if edges need to go clockwise or counter-clockwise</li>
+                </ol>
+                
+                <p><strong>Edges go CLOCKWISE:</strong></p>
+                <div class="formula-box">R2 U R U R' U' R' U' R' U R'</div>
+                
+                <p><strong>Edges go COUNTER-CLOCKWISE:</strong></p>
+                <div class="formula-box">R U' R U R U R U' R' U' R2</div>
+                
+                <div class="memory-trick">
+                    <strong>🧠 Memory Trick:</strong>
+                    <br><strong>Clockwise (U-Perm A):</strong> Start with "R2 U", then lots of R and U moves
+                    <br><strong>Counter-Clockwise (U-Perm B):</strong> It's basically the reverse!
+                </div>
+            </div>
+            
+            <div class="pll-case">
+                <div class="case-name">OPPOSITE EDGES CORRECT</div>
+                <p>Two opposite faces correct (front and back OR left and right)</p>
+                <p>Position one correct face in front, one in back</p>
+                <div class="formula-box">M2 U M2 U2 M2 U M2</div>
+                <p><em>M means move the middle layer like you're turning L</em></p>
+                
+                <div class="memory-trick">
+                    <strong>🧠 Memory Trick (H-Perm):</strong> "M2 U, M2 U-U, M2 U, M2"
+                    <br>Think: "Double, single, double-double, double, single, double"
+                </div>
+            </div>
+            
+            <div class="pll-case">
+                <div class="case-name">ADJACENT EDGES CORRECT</div>
+                <p>Two adjacent faces are correct</p>
+                <p>Put the two correct faces on the LEFT and BACK</p>
+                <div class="formula-box">M2 U M2 U M' U2 M2 U2 M' U2</div>
+                
+                <div class="memory-trick">
+                    <strong>🧠 Memory Trick (Z-Perm):</strong> Think of this as the "zig-zag" algorithm
+                </div>
+            </div>
+            
+            <div class="pll-case">
+                <div class="case-name">NO EDGES CORRECT</div>
+                <p>Just do any edge algorithm from any angle, then you'll have at least one correct side. Then use the appropriate algorithm above.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="page page-break">
+        <h2>🎓 SUMMARY: THE COMPLETE CFOP METHOD</h2>
+        
+        <div class="step-box">
+            <h3>Step-by-Step Quick Reference:</h3>
+            
+            <div style="background: #e3f2fd; padding: 20px; border-radius: 10px; margin: 15px 0;">
+                <h3 style="color: #1976d2;">1️⃣ CROSS (White Cross)</h3>
+                <p>• Make a white cross on bottom with matching side colors</p>
+                <p>• Use F2 to flip edges from top to bottom</p>
+            </div>
+            
+            <div style="background: #f3e5f5; padding: 20px; border-radius: 10px; margin: 15px 0;">
+                <h3 style="color: #7b1fa2;">2️⃣ F2L (First Two Layers)</h3>
+                <p>• Pair corners with edges</p>
+                <p>• Insert four pairs: R U R', U R U' R', etc.</p>
+            </div>
+            
+            <div style="background: #fff9c4; padding: 20px; border-radius: 10px; margin: 15px 0;">
+                <h3 style="color: #f57f17;">3️⃣ OLL (Orient Last Layer)</h3>
+                <p><strong>Yellow Cross:</strong> F R U R' U' F' (repeat based on pattern)</p>
+                <p><strong>Yellow Face:</strong> R U R' U R U2 R' (Sune algorithm)</p>
+            </div>
+            
+            <div style="background: #c8e6c9; padding: 20px; border-radius: 10px; margin: 15px 0;">
+                <h3 style="color: #2e7d32;">4️⃣ PLL (Permute Last Layer)</h3>
+                <p><strong>Corners:</strong> U R U' L' U R' U' L</p>
+                <p><strong>Edges:</strong> U-Perms or H-Perm depending on pattern</p>
+            </div>
+        </div>
+        
+        <div class="tip-box">
+            <h3>🏆 PRACTICE TIPS:</h3>
+            <ul>
+                <li>Learn one step at a time - master each before moving to the next</li>
+                <li>Practice the algorithms slowly until muscle memory develops</li>
+                <li>Time yourself - track your progress!</li>
+                <li>The average beginner solves in 2-3 minutes, with practice you can reach under 30 seconds</li>
+                <li>Watch YouTube tutorials for visual demonstration of algorithms</li>
+            </ul>
+        </div>
+        
+        <div class="memory-trick">
+            <h3>🧠 MASTER FORMULAS TO MEMORIZE:</h3>
+            <ol>
+                <li><strong>F R U R' U' F'</strong> - Yellow cross (Dot → L → Line → Cross)</li>
+                <li><strong>R U R' U R U2 R'</strong> - Sune (Yellow corners)</li>
+                <li><strong>U R U' L' U R' U' L</strong> - Corner permutation</li>
+                <li><strong>R2 U R U R' U' R' U' R' U R'</strong> - U-Perm A (edges clockwise)</li>
+                <li><strong>R U' R U R U R U' R' U' R2</strong> - U-Perm B (edges counter-clockwise)</li>
+                <li><strong>M2 U M2 U2 M2 U M2</strong> - H-Perm (opposite edges)</li>
+            </ol>
+        </div>
+        
+        <div style="text-align: center; margin-top: 40px; padding: 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 15px;">
+            <h2 style="color: white; margin: 0;">🎉 YOU'RE READY TO SOLVE THE RUBIK'S CUBE! 🎉</h2>
+            <p style="font-size: 18px; margin-top: 15px;">Practice makes perfect. Keep solving!</p>
+        </div>
+    </div>
+    
+    <div class="page page-break">
+        <h2>📊 VISUAL ALGORITHM CHART - LAST LAYER</h2>
+        
+        <div class="step-box">
+            <h3>OLL - Yellow Cross Formation</h3>
+            
+            <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+                <tr>
+                    <th style="border: 2px solid #333; padding: 15px; background: #3498db; color: white;">Pattern You See</th>
+                    <th style="border: 2px solid #333; padding: 15px; background: #3498db; color: white;">Algorithm</th>
+                    <th style="border: 2px solid #333; padding: 15px; background: #3498db; color: white;">Result</th>
+                </tr>
+                <tr>
+                    <td style="border: 2px solid #333; padding: 15px; text-align: center;">
+                        <strong>DOT</strong><br>
+                        <div class="cube-grid" style="margin: 10px auto;">
+                            <div class="cube-piece gray"></div>
+                            <div class="cube-piece gray"></div>
+                            <div class="cube-piece gray"></div>
+                            <div class="cube-piece gray"></div>
+                            <div class="cube-piece yellow">●</div>
+                            <div class="cube-piece gray"></div>
+                            <div class="cube-piece gray"></div>
+                            <div class="cube-piece gray"></div>
+                            <div class="cube-piece gray"></div>
+                        </div>
+                        Only center yellow
+                    </td>
+                    <td style="border: 2px solid #333; padding: 15px; text-align: center;">
+                        <div class="formula-box" style="margin: 5px;">F R U R' U' F'</div>
+                    </td>
+                    <td style="border: 2px solid #333; padding: 15px; text-align: center;">
+                        <strong>L-SHAPE</strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="border: 2px solid #333; padding: 15px; text-align: center;">
+                        <strong>L-SHAPE</strong><br>
+                        <div class="cube-grid" style="margin: 10px auto;">
+                            <div class="cube-piece yellow">●</div>
+                            <div class="cube-piece gray"></div>
+                            <div class="cube-piece gray"></div>
+                            <div class="cube-piece yellow">●</div>
+                            <div class="cube-piece yellow">●</div>
+                            <div class="cube-piece gray"></div>
+                            <div class="cube-piece gray"></div>
+                            <div class="cube-piece gray"></div>
+                            <div class="cube-piece gray"></div>
+                        </div>
+                        L in top-left
+                    </td>
+                    <td style="border: 2px solid #333; padding: 15px; text-align: center;">
+                        <div class="formula-box" style="margin: 5px;">F R U R' U' F'</div>
+                    </td>
+                    <td style="border: 2px solid #333; padding: 15px; text-align: center;">
+                        <strong>LINE</strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="border: 2px solid #333; padding: 15px; text-align: center;">
+                        <strong>LINE</strong><br>
+                        <div class="cube-grid" style="margin: 10px auto;">
+                            <div class="cube-piece gray"></div>
+                            <div class="cube-piece yellow">●</div>
+                            <div class="cube-piece gray"></div>
+                            <div class="cube-piece gray"></div>
+                            <div class="cube-piece yellow">●</div>
+                            <div class="cube-piece gray"></div>
+                            <div class="cube-piece gray"></div>
+                            <div class="cube-piece yellow">●</div>
+                            <div class="cube-piece gray"></div>
+                        </div>
+                        Horizontal line
+                    </td>
+                    <td style="border: 2px solid #333; padding: 15px; text-align: center;">
+                        <div class="formula-box" style="margin: 5px;">F R U R' U' F'</div>
+                    </td>
+                    <td style="border: 2px solid #333; padding: 15px; text-align: center;">
+                        <strong>✓ CROSS</strong>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="step-box">
+            <h3>OLL - Corner Orientation (Sune)</h3>
+            
+            <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+                <tr>
+                    <th style="border: 2px solid #333; padding: 15px; background: #e74c3c; color: white;">Yellow Corners Count</th>
+                    <th style="border: 2px solid #333; padding: 15px; background: #e74c3c; color: white;">Position</th>
+                    <th style="border: 2px solid #333; padding: 15px; background: #e74c3c; color: white;">Algorithm</th>
+                </tr>
+                <tr>
+                    <td style="border: 2px solid #333; padding: 15px; text-align: center;"><strong>0 corners</strong></td>
+                    <td style="border: 2px solid #333; padding: 15px;">Any position</td>
+                    <td style="border: 2px solid #333; padding: 15px;">
+                        <div class="formula-box" style="margin: 5px;">R U R' U R U2 R'</div>
+                        <em>Repeat 1-2 times</em>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="border: 2px solid #333; padding: 15px; text-align: center;"><strong>1 corner</strong></td>
+                    <td style="border: 2px solid #333; padding: 15px;">Yellow corner in front-right</td>
+                    <td style="border: 2px solid #333; padding: 15px;">
+                        <div class="formula-box" style="margin: 5px;">R U R' U R U2 R'</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="border: 2px solid #333; padding: 15px; text-align: center;"><strong>2 corners (adjacent)</strong></td>
+                    <td style="border: 2px solid #333; padding: 15px;">Two yellow corners in back</td>
+                    <td style="border: 2px solid #333; padding: 15px;">
+                        <div class="formula-box" style="margin: 5px;">R U R' U R U2 R'</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="border: 2px solid #333; padding: 15px; text-align: center;"><strong>2 corners (diagonal)</strong></td>
+                    <td style="border: 2px solid #333; padding: 15px;">Opposite corners</td>
+                    <td style="border: 2px solid #333; padding: 15px;">
+                        <div class="formula-box" style="margin: 5px;">R U R' U R U2 R'</div>
+                        <em>Then adjust and repeat</em>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    
+    <div class="page page-break">
+        <h2>📊 PLL DECISION TREE</h2>
+        
+        <div class="step-box">
+            <h3>Step 1: Corner Permutation</h3>
+            
+            <div style="background: #fff3cd; border: 3px solid #ffc107; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                <p style="font-size: 18px; font-weight: bold; text-align: center;">Look at the corners. Are any in the correct position?</p>
+            </div>
+            
+            <div style="display: flex; justify-content: space-around; margin: 20px 0;">
+                <div style="flex: 1; background: #d4edda; border: 2px solid #28a745; padding: 20px; margin: 10px; border-radius: 10px;">
+                    <h4 style="text-align: center; color: #155724;">✓ 1 Corner Correct</h4>
+                    <p style="text-align: center; margin: 10px 0;">Put it in front-right</p>
+                    <div class="formula-box">U R U' L' U R' U' L</div>
+                    <p style="text-align: center; margin-top: 10px;"><em>All corners solved!</em></p>
+                </div>
+                
+                <div style="flex: 1; background: #f8d7da; border: 2px solid #dc3545; padding: 20px; margin: 10px; border-radius: 10px;">
+                    <h4 style="text-align: center; color: #721c24;">✗ 0 Corners Correct</h4>
+                    <p style="text-align: center; margin: 10px 0;">Do algorithm from any angle</p>
+                    <div class="formula-box">U R U' L' U R' U' L</div>
+                    <p style="text-align: center; margin-top: 10px;"><em>Now 1 corner will be correct</em></p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="step-box">
+            <h3>Step 2: Edge Permutation</h3>
+            
+            <div style="background: #cce5ff; border: 3px solid #004085; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                <p style="font-size: 18px; font-weight: bold; text-align: center;">Now look at the edges. How many sides are complete?</p>
+            </div>
+            
+            <div style="background: #d1ecf1; border: 2px solid #0c5460; padding: 20px; margin: 15px 0; border-radius: 8px;">
+                <h4 style="color: #0c5460;">Scenario 1: ALL 4 SIDES COMPLETE</h4>
+                <p style="font-size: 20px; text-align: center; margin: 15px 0;">🎊 <strong>CONGRATULATIONS! CUBE SOLVED!</strong> 🎊</p>
+            </div>
+            
+            <div style="background: #d1ecf1; border: 2px solid #0c5460; padding: 20px; margin: 15px 0; border-radius: 8px;">
+                <h4 style="color: #0c5460;">Scenario 2: 1 SIDE COMPLETE</h4>
+                <p>Put the complete side in the BACK</p>
+                <p style="margin-top: 10px;"><strong>Check: Do the three unsolved edges need to rotate clockwise or counter-clockwise?</strong></p>
+                
+                <div style="display: flex; gap: 20px; margin-top: 15px;">
+                    <div style="flex: 1; background: white; padding: 15px; border-radius: 8px;">
+                        <p style="font-weight: bold; color: #0c5460;">Clockwise ↻</p>
+                        <div class="formula-box">R2 U R U R' U' R' U' R' U R'</div>
+                        <div class="memory-trick" style="margin-top: 10px; background: #fff3cd;">
+                            <strong>Think:</strong> R-double, then U-R pattern
+                        </div>
+                    </div>
+                    
+                    <div style="flex: 1; background: white; padding: 15px; border-radius: 8px;">
+                        <p style="font-weight: bold; color: #0c5460;">Counter-Clockwise ↺</p>
+                        <div class="formula-box">R U' R U R U R U' R' U' R2</div>
+                        <div class="memory-trick" style="margin-top: 10px; background: #fff3cd;">
+                            <strong>Think:</strong> R-U pattern, then end with R-double
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="background: #d1ecf1; border: 2px solid #0c5460; padding: 20px; margin: 15px 0; border-radius: 8px;">
+                <h4 style="color: #0c5460;">Scenario 3: 2 OPPOSITE SIDES COMPLETE</h4>
+                <p>Front and Back complete (or Left and Right complete)</p>
+                <p style="margin-top: 10px;">Position so one complete side is in front, one in back</p>
+                <div class="formula-box">M2 U M2 U2 M2 U M2</div>
+                <div class="memory-trick" style="margin-top: 10px;">
+                    <strong>H-Perm Pattern:</strong> M2-U, M2-U2, M2-U, M2
+                    <br><em>(Middle layer moves: push middle like turning L)</em>
+                </div>
+            </div>
+            
+            <div style="background: #d1ecf1; border: 2px solid #0c5460; padding: 20px; margin: 15px 0; border-radius: 8px;">
+                <h4 style="color: #0c5460;">Scenario 4: 2 ADJACENT SIDES COMPLETE</h4>
+                <p>Two sides next to each other are complete</p>
+                <p style="margin-top: 10px;">Put the two complete sides on the LEFT and BACK</p>
+                <div class="formula-box">M2 U M2 U M' U2 M2 U2 M' U2</div>
+                <div class="memory-trick" style="margin-top: 10px;">
+                    <strong>Z-Perm:</strong> The "zig-zag" algorithm - most complex PLL
+                </div>
+            </div>
+            
+            <div style="background: #f8d7da; border: 2px solid #721c24; padding: 20px; margin: 15px 0; border-radius: 8px;">
+                <h4 style="color: #721c24;">Scenario 5: 0 SIDES COMPLETE</h4>
+                <p>No edges match</p>
+                <p style="margin-top: 10px;"><strong>Solution:</strong> Do any edge algorithm from any position. After one execution, you'll have at least one complete side. Then use the appropriate algorithm above.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="page page-break">
+        <h2>🎯 PRACTICE DRILLS & EXERCISES</h2>
+        
+        <div class="step-box">
+            <h3>Week 1: Master the Basics</h3>
+            <div style="background: #e3f2fd; padding: 15px; margin: 10px 0; border-radius: 8px;">
+                <h4>Day 1-2: Cross</h4>
+                <ul>
+                    <li>Practice making the white cross 20 times</li>
+                    <li>Goal: Complete cross in under 30 seconds</li>
+                    <li>Focus on efficiency - minimize moves</li>
+                </ul>
+            </div>
+            
+            <div style="background: #f3e5f5; padding: 15px; margin: 10px 0; border-radius: 8px;">
+                <h4>Day 3-4: F2L</h4>
+                <ul>
+                    <li>Practice inserting pairs slowly</li>
+                    <li>Do 10 complete F2L solutions</li>
+                    <li>Focus on recognizing corner-edge pairs</li>
+                </ul>
+            </div>
+            
+            <div style="background: #fff9c4; padding: 15px; margin: 10px 0; border-radius: 8px;">
+                <h4>Day 5-6: OLL</h4>
+                <ul>
+                    <li>Memorize: F R U R' U' F' (repeat 20 times)</li>
+                    <li>Memorize: R U R' U R U2 R' (repeat 20 times)</li>
+                    <li>Practice recognizing patterns</li>
+                </ul>
+            </div>
+            
+            <div style="background: #c8e6c9; padding: 15px; margin: 10px 0; border-radius: 8px;">
+                <h4>Day 7: PLL</h4>
+                <ul>
+                    <li>Memorize corner permutation algorithm</li>
+                    <li>Memorize at least U-Perm A and H-Perm</li>
+                    <li>Complete 5 full solves</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="step-box">
+            <h3>Week 2-4: Build Speed</h3>
+            <ul style="line-height: 2;">
+                <li>✓ Do 3-5 solves every day</li>
+                <li>✓ Time each solve and track your progress</li>
+                <li>✓ Focus on smooth turns, not fast turns</li>
+                <li>✓ Learn to recognize patterns faster</li>
+                <li>✓ Practice algorithms until they're muscle memory</li>
+            </ul>
+        </div>
+        
+        <div class="tip-box">
+            <h3>💪 SPEED IMPROVEMENT TIPS</h3>
+            <ol style="line-height: 2;">
+                <li><strong>Look Ahead:</strong> While executing an algorithm, look for the next step</li>
+                <li><strong>Finger Tricks:</strong> Use your fingers to turn, not your whole hand</li>
+                <li><strong>Smooth not Fast:</strong> Smooth turning with no pauses is faster than rushed turning</li>
+                <li><strong>Minimize Rotations:</strong> Try to solve without rotating the entire cube too much</li>
+                <li><strong>Practice Weak Areas:</strong> If F2L is slow, practice just F2L for a week</li>
+            </ol>
+        </div>
+    </div>
+    
+    <div class="page page-break">
+        <h2>🆘 TROUBLESHOOTING GUIDE</h2>
+        
+        <div class="step-box">
+            <h3>Common Problems & Solutions</h3>
+            
+            <div style="background: #fff3cd; border-left: 5px solid #ffc107; padding: 15px; margin: 15px 0;">
+                <h4>Problem: "My cross edges don't match the center colors!"</h4>
+                <p><strong>Solution:</strong> After getting white edges around the white center, you MUST rotate the top layer to align each edge color with its matching center BEFORE flipping it down with F2.</p>
+            </div>
+            
+            <div style="background: #fff3cd; border-left: 5px solid #ffc107; padding: 15px; margin: 15px 0;">
+                <h4>Problem: "I messed up during F2L!"</h4>
+                <p><strong>Solution:</strong> Take the pair out (reverse the insertion), reposition, and try again. If a corner or edge is in the wrong slot, move it to the top layer first.</p>
+            </div>
+            
+            <div style="background: #fff3cd; border-left: 5px solid #ffc107; padding: 15px; margin: 15px 0;">
+                <h4>Problem: "The yellow cross algorithm isn't working!"</h4>
+                <p><strong>Solution:</strong> Make sure you're holding the cube correctly:</p>
+                <ul>
+                    <li>DOT: any orientation</li>
+                    <li>L-SHAPE: L must be in the top-left corner</li>
+                    <li>LINE: must be horizontal (left to right)</li>
+                </ul>
+            </div>
+            
+            <div style="background: #fff3cd; border-left: 5px solid #ffc107; padding: 15px; margin: 15px 0;">
+                <h4>Problem: "Sune isn't orienting all corners!"</h4>
+                <p><strong>Solution:</strong> You may need to do Sune multiple times (1-3 times). After each execution, check if all corners are yellow. If not, rotate the top layer and do Sune again.</p>
+            </div>
+            
+            <div style="background: #fff3cd; border-left: 5px solid #ffc107; padding: 15px; margin: 15px 0;">
+                <h4>Problem: "After PLL, my cube is still not solved!"</h4>
+                <p><strong>Solution:</strong> Make sure you're doing corners BEFORE edges. Also, check that you positioned the cube correctly before executing the algorithm (correct corner in front-right, or correct side in back).</p>
+            </div>
+            
+            <div style="background: #fff3cd; border-left: 5px solid #ffc107; padding: 15px; margin: 15px 0;">
+                <h4>Problem: "I can't remember all the algorithms!"</h4>
+                <p><strong>Solution:</strong> Don't try to memorize all at once! Focus on:</p>
+                <ol>
+                    <li>F R U R' U' F' (yellow cross)</li>
+                    <li>R U R' U R U2 R' (Sune)</li>
+                    <li>U R U' L' U R' U' L (corners)</li>
+                    <li>One U-Perm for edges</li>
+                </ol>
+                <p>These 4 algorithms can solve any cube! Learn others gradually.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="page">
+        <h2>📱 RECOMMENDED RESOURCES</h2>
+        
+        <div class="step-box">
+            <h3>YouTube Channels for Visual Learning:</h3>
+            <ul style="line-height: 2;">
+                <li>✓ <strong>J Perm</strong> - Excellent CFOP tutorials</li>
+                <li>✓ <strong>CubeHead</strong> - Beginner friendly</li>
+                <li>✓ <strong>Tingman</strong> - Advanced techniques</li>
+            </ul>
+            
+            <h3 style="margin-top: 30px;">Useful Websites:</h3>
+            <ul style="line-height: 2;">
+                <li>✓ <strong>speedsolving.com</strong> - Community forum</li>
+                <li>✓ <strong>cubesolv.es</strong> - Algorithm database</li>
+                <li>✓ <strong>cstimer.net</strong> - Online timer</li>
+            </ul>
+            
+            <h3 style="margin-top: 30px;">Mobile Apps:</h3>
+            <ul style="line-height: 2;">
+                <li>✓ <strong>Twisty Timer</strong> - Track your solves</li>
+                <li>✓ <strong>CubeX</strong> - Algorithm library</li>
+            </ul>
+        </div>
+        
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 15px; margin-top: 40px; text-align: center;">
+            <h2 style="color: white; margin-bottom: 20px;">🏆 YOUR CUBING JOURNEY</h2>
+            <div style="font-size: 18px; line-height: 2;">
+                <p><strong>Week 1:</strong> 3-5 minutes per solve</p>
+                <p><strong>Week 2:</strong> 2-3 minutes per solve</p>
+                <p><strong>Month 1:</strong> 1-2 minutes per solve</p>
+                <p><strong>Month 3:</strong> Under 1 minute</p>
+                <p><strong>Month 6:</strong> 30-45 seconds</p>
+                <p><strong>Year 1:</strong> Sub-30 seconds! 🎉</p>
+            </div>
+            <h3 style="color: white; margin-top: 30px; font-size: 24px;">Keep Practicing - You've Got This!</h3>
+        </div>
+        
+        <div style="text-align: center; margin-top: 40px; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+            <p style="font-size: 14px; color: #666;">
+                <strong>Note:</strong> This guide focuses on beginner-friendly 2-look OLL and 2-look PLL.<br>
+                As you advance, you can learn full OLL (57 algorithms) and full PLL (21 algorithms) for faster solves.
+            </p>
+        </div>
+    </div>
+    
+</body>
+</html>
